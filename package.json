@@ -22,5 +22,7 @@
   "dependencies": {
     "libsodium-wrappers": "^0.7.4"
   },
-  "engines": { "node" : ">=10.16.0" }
+  "engines": {
+    "node": ">=10.16.0"
+  }
 }
