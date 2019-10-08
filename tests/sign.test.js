@@ -1,5 +1,5 @@
 const nacl = require('libsodium-wrappers')
-const Signature = require('../src/Signature')
+const Signature = require('../src/Signature.js')
 
 describe('signing module', () => {
   it('provides a verifying key', async () => {
