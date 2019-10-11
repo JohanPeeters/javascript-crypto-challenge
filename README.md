@@ -14,7 +14,7 @@ But this should be clear from the tests, as should the methods that you need to 
 
 Signing a message
 -----------------
-We use public-key signatures. They are based on asymmetric key pairs: one of the keys is public, the other private. The private key is sometimes also called the signing key. The secret, or private, key is also called the signing key.
+We use public-key signatures. They are based on asymmetric key pairs: one of the keys is public, the other private. The public key is sometimes also called the verifying key. The secret, or private, key is also called the signing key.
 
 Decrypting a ciphertext
 -----------------------
