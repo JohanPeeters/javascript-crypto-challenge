@@ -2,6 +2,7 @@ const sodium = require('libsodium-wrappers');
 let keypair;
 
 (async() => {
+  console.log("test")
   await sodium.ready;
   keypair = sodium.crypto_sign_keypair();
 })();
