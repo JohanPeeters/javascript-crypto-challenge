@@ -1,6 +1,6 @@
 const nacl = require('libsodium-wrappers');
 
-let clientPublicKey, serverPublicKey, serverPrivateKey;
+let clientPublicKey
 let rx, tx;
 
 
@@ -15,8 +15,8 @@ module.exports = {
 
     serverPublicKey: async () => {
         const keyPair = nacl.crypto_kx_keypair();
-        serverPrivateKey = keyPair.privateKey;
-        serverPublicKey = keyPair.publicKey;
+        let serverPrivateKey = keyPair.privateKey;
+        let serverPublicKey = keyPair.publicKey;
 
         const sharedKeys = await nacl.crypto_kx_server_session_keys(
             serverPublicKey,
@@ -29,11 +29,11 @@ module.exports = {
         return serverPublicKey;
     },
 
-    decrypt: async function (ciphertext, nonce) {
+    decrypt: async (ciphertext, nonce) => {
         return nacl.crypto_secretbox_open_easy(ciphertext, nonce, rx);
     },
 
-    encrypt: async function (msg) {
+    encrypt: async (msg)  => {
         let nonce = nacl.randombytes_buf(nacl.crypto_secretbox_NONCEBYTES);
         let ciphertext = nacl.crypto_secretbox_easy(msg, nonce, tx);
 
