@@ -1,14 +1,17 @@
-This is a simple exercise in using cryptography with `libsodium.js`. It consists of 2 parts:
+This is a simple exercise in using cryptography with `libsodium.js`. It consists of 3 parts:
 * signing a message
-* decrypting a ciphertext.
+* decrypting a ciphertext
+* setting up a secure session.
 
 In both cases, the challenge is to make some unit tests pass, respectively
 * `tests/sign.test.js`, and,
-* `tests/decrypt.test.js`.
+* `tests/decrypt.test.js`
+* `tests/secure-session.test.js`.
 
 The tests assume that you expose an API in, respectively
-* `src/Signature.js`, and,
-* `src/Decryptor.js`
+* `src/Signature.js`,
+* `src/Decryptor.js`, and,
+* `src/SecureSession.js`
 
 But this should be clear from the tests, as should the methods that you need to implement.
 
@@ -23,6 +26,12 @@ For encrypting and decrypting data, we use symmetric cryptography, also called s
 Since an adversary should not be able to detect that the same plaintext message is sent several times, each message is encrypted with a unique nonce.
 
 We use *authenticated encryption* which allows the receiver to verify the integrity of the ciphertext. Libsodium does this transparently - if the ciphertext has been tampered with, the decryption function fails.
+
+Setting up a secure session
+---------------------------
+Asymmetric cryptography is well-suited for authenticating the owner of a public key, but too slow for encrypting a large amount of data. Therefore, when 2 parties want to exchange many messages, they usually run a key-exchange protocol to agree on a shared symmetric key first. Subsequently, they send each other messages encrypted with the shared key.
+
+Libsodium's key-exchange actually establishes 2 shared keys, one used by the client to encrypt server-bound messages, a second one used by the server when sending messages to the client. This arrangement makes it easier for either party to guarantee that it only uses a nonce once with a given key - not that this is a big concern in this exercise: client and server send exactly one message.
 
 More documentation
 ------------------
