@@ -4,14 +4,14 @@ This is a simple exercise in using cryptography with `libsodium.js`. It consists
 * setting up a secure session.
 
 In both cases, the challenge is to make some unit tests pass, respectively
-* `tests/sign.test.js`, and,
-* `tests/decrypt.test.js`
-* `tests/secure-session.test.js`.
+* `tests/Signature.test.js`, and,
+* `tests/Decryptor.test.js`
+* `tests/SecureSessionPeer.test.js`.
 
 The tests assume that you expose an API in, respectively
 * `src/Signature.js`,
 * `src/Decryptor.js`, and,
-* `src/SecureSession.js`
+* `src/SecureSessionPeer.js`
 
 But this should be clear from the tests, as should the methods that you need to implement.
 
