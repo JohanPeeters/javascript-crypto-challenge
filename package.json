@@ -1,6 +1,6 @@
 {
   "name": "crypto-challenge",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Libsodium-based tests to challenge your crypto coding skills.",
   "main": "suite.js",
   "scripts": {
@@ -12,6 +12,7 @@
     "verify",
     "encrypt",
     "decrypt",
+    "key exchange",
     "libsodium"
   ],
   "author": "Johan Peeters",
