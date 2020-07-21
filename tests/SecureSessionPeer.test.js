@@ -2,7 +2,6 @@
 const nacl = require('libsodium-wrappers')
 
 const SecureSessionPeer = require('../src/SecureSessionPeer')
-const Decryptor = require('../src/Decryptor')
 
 describe('SecureSessionPeer', () => {
   let peer
@@ -46,26 +45,31 @@ describe('SecureSessionPeer', () => {
       expect(peer.publicKey).not.toEqual(otherPeer.publicKey)
     })
     describe('which can encrypt messages', () => {
-      let msg, ciphertext1, ciphertext2, nonce1, nonce2
+      let msg, peerCiphertext, otherPeerCiphertext, peerNonce, otherPeerNonce
       beforeEach(async () => {
         await nacl.ready
         msg = nacl.randombytes_buf(1024)
         let res = peer.encrypt(msg)
-        ciphertext1 = res.ciphertext
-        nonce1 = res.nonce
+        peerCiphertext = res.ciphertext
+        peerNonce = res.nonce
         res = otherPeer.encrypt(msg)
-        ciphertext2 = res.ciphertext
-        nonce2 = res.nonce
+        otherPeerCiphertext = res.ciphertext
+        otherPeerNonce = res.nonce
       })
       it('returning a ciphertext and a nonce', () => {
-        expect(ciphertext1).toBeDefined()
-        expect(nonce1).toBeDefined()
-        expect(ciphertext2).toBeDefined()
-        expect(nonce2).toBeDefined()
+        expect(peerCiphertext).toBeDefined()
+        expect(peerNonce).toBeDefined()
+        expect(otherPeerCiphertext).toBeDefined()
+        expect(otherPeerNonce).toBeDefined()
       })
       it('that can be decrypted messages by the other peer', () => {
-        const {ciphertext, nonce} = peer.encrypt(msg)
-        expect(otherPeer.decrypt(ciphertext, nonce)).toEqual(msg)
+        expect(otherPeer.decrypt(peerCiphertext, peerNonce)).toEqual(msg)
+      })
+      it('that cannot be decrypted with the public key', () => {
+        try {
+          nacl.crypto_secretbox_open_easy(peerCiphertext, peerNonce, peer.publicKey)
+          fail()
+        } catch (e) {}
       })
       it('that are integrity protected', () => {
         const {ciphertext, nonce} = peer.encrypt(msg)
@@ -77,23 +81,17 @@ describe('SecureSessionPeer', () => {
         } catch(e) {
         }
       })
-      it('that cannot be decrypted with the public key', async () => {
-        const {ciphertext, nonce} = peer.encrypt(msg)
-        const decryptor = await Decryptor(peer.publicKey)
-        const res = decryptor.decrypt(ciphertext, nonce)
-        expect(res).not.toEqual(msg)
-      })
     })
     it('that exchange messages', async () => {
       await nacl.ready
-      const msg1 = nacl.randombytes_buf(1024)
-      const msg2 = nacl.randombytes_buf(1024)
-      peer.send(msg1)
+      const peerMsg = nacl.randombytes_buf(1024)
+      const otherPeerMsg = nacl.randombytes_buf(1024)
+      peer.send(peerMsg)
       let received = otherPeer.receive()
-      expect(received).toEqual(msg1)
-      otherPeer.send(msg2)
+      expect(received).toEqual(peerMsg)
+      otherPeer.send(otherPeerMsg)
       received = peer.receive()
-      expect(received).toEqual(msg2)
+      expect(received).toEqual(otherPeerMsg)
     })
   })
 })
