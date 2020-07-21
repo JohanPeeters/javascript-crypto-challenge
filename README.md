@@ -44,3 +44,5 @@ git clone git@github.com:JohanPeeters/javascript-crypto-challenge.git
 npm install
 npm test
 ```
+
+It is strongly advised to work on the code for one test at the time. In order to do so, skip the other tests by calling the [`xit`](https://jestjs.io/docs/en/api#testskipname-fn) rather than the `it` function. 
