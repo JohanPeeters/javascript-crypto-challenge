@@ -1,16 +1,19 @@
-This is a simple exercise in using cryptography with `libsodium.js`. It consists of 3 parts:
+This is a simple exercise in using cryptography with `libsodium.js`. It consists of 4 parts:
 * signing a message
 * decrypting a ciphertext
+* verifying a hashed password
 * setting up a secure session.
 
-In both cases, the challenge is to make some unit tests pass, respectively
+In all cases, the challenge is to make some unit tests pass, respectively
 * `tests/Signature.test.js`, and,
 * `tests/Decryptor.test.js`
+* `tests/PasswordVerifier.test.js`
 * `tests/SecureSessionPeer.test.js`.
 
 The tests assume that you expose an API in, respectively
 * `src/Signature.js`,
-* `src/Decryptor.js`, and,
+* `src/Decryptor.js`, 
+* `src/PasswordHashVerifier.js` and,
 * `src/SecureSessionPeer.js`
 
 But this should be clear from the tests, as should the methods that you need to implement.
@@ -26,6 +29,10 @@ For encrypting and decrypting data, we use symmetric cryptography, also called s
 Since an adversary should not be able to detect that the same plaintext message is sent several times, each message is encrypted with a unique nonce.
 
 We use *authenticated encryption* which allows the receiver to verify the integrity of the ciphertext. Libsodium does this transparently - if the ciphertext has been tampered with, the decryption function fails.
+
+Verifying a hashed password
+---------------------------
+We use Argon2 as the password hashing algorithm - this is default in the current version of libsodium. `crypto_pwhash_str` generates a random salt for each invocation, concatenates the salt and password and hashes the resulting string. Argon2 uses a configurable number of hash iterations (the `opslimit` parameter) and memory (`memlimit`) to make verification respectively more CPU- and RAM-intensive. The output of `crypto_pwhash_str` includes the parameters and salt. These need therefore not be specified when verifying a password against its hash.
 
 Setting up a secure session
 ---------------------------
