@@ -18,14 +18,13 @@ describe('Decryption', () => {
   })
 
   it('needs to be instantiated with a decryption key', async () => {
-    let decryptor
+    let decryptorWithoutKey
     try {
-      decryptor = await Decryptor()
+      decryptorWithoutKey = await Decryptor()
       fail()
     } catch (e) {
       expect(e).toMatch('no key')
     }
-    decryptor = await Decryptor(key)
     decryptor.decrypt(ciphertext, nonce) // should succeed
   })
 
