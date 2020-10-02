@@ -1,0 +1,61 @@
+const nacl = require('libsodium-wrappers');
+const Encryptor = require('./Encryptor');
+const Decryptor = require('./Decryptor');
+
+const newSecureSessionPeer = async(server = null) => {
+    // Wait til nacl is ready
+    await nacl.ready;
+
+    // Generate asymetric keypair
+    const { publicKey, privateKey } = nacl.crypto_box_keypair();
+        
+    const addEncryptorDecryptor = async (key, obj) => {
+        obj['encryptor'] encryptor = Encryptor(key);
+    }
+
+    // Create the object
+    const obj = {
+        publicKey: publicKey,
+
+        connect = function(clientPublicKey) {
+            const key = nacl.crypto_kx_server_session_keys(
+                publicKey,
+                privateKey,
+                clientPublicKey
+            );
+        },
+
+        encrypt: function(msg) {
+            const nonce = nacl.randombytes_buf(nacl.crypto_secretbox_NONCEBYTES);
+            const ciphertext = this.encryptor.encrypt(msg, nonce);
+            return { nonce, ciphertext };
+        },
+
+        decrypt: async() => {},
+        send: () => {},
+        receive: () => {},
+    };
+
+    if(server) {
+        const key = nacl.crypto_kx_client_session_keys(
+            publicKey,
+            privateKey,
+            server.publicKey
+        );
+
+        obj.encryptor = await Encryptor(key);
+        obj.decryptor = await Decryptor(key);
+
+        server.connect(publicKey);
+    }
+
+    return Object.freeze(obj);
+}
+
+(async()=>{
+    const peer1 = await newSecureSessionPeer();
+    const peer2 = await newSecureSessionPeer(peer1);
+    console.log(peer1, peer2);
+})();
+
+module.exports = newSecureSessionPeer;

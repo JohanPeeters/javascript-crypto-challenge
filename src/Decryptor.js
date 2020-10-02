@@ -1,6 +1,8 @@
 const nacl = require('libsodium-wrappers');
 
-module.exports = (key) => {
+module.exports = async(key) => {
+    await nacl.ready;
+
     if(key == null) throw 'no key';
 
     return Object.freeze({
