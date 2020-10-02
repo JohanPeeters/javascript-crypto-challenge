@@ -1,0 +1,40 @@
+const nacl = require('libsodium-wrappers');
+const Encryptor = require('./Encryptor');
+const Decryptor = require('./Decryptor');
+
+
+const newSecureSessionPeer = async({server = null, name}) => {
+    // Wait for init nacl
+    await nacl.ready;
+
+    // Inititiaze object
+    const secureSessionPeer = {name};
+
+    // Generate asymetic keys
+    const { publicKey, privateKey } = nacl.crypto_box_keypair();
+    secureSessionPeer.publicKey = publicKey;
+
+    // Connection method
+    secureSessionPeer.connect = async function(other, keyFn) {
+
+        this.decryptor = await Decryptor(key);
+        this.encryptor = await Encryptor(key);
+        console.log(this);
+
+    // Connect the server and client
+    if(server) {
+        await secureSessionPeer.connect(server, nacl.crypto_kx_client_session_keys);
+        await server.connect(secureSessionPeer, nacl.crypto_kx_server_session_keys);
+    };
+
+    return (secureSessionPeer);
+}
+
+(async()=>{
+    const peer1 = await newSecureSessionPeer({ name: 'server' });
+    const peer2 = await newSecureSessionPeer({ name: 'client', server: peer1});
+
+    // console.log(peer1, peer2);
+})();
+
+module.exports = newSecureSessionPeer;

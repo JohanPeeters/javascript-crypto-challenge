@@ -12,10 +12,10 @@ describe('PasswordHashVerifier', () => {
     })
 
     beforeEach(() => {
-        const opslimit = nacl.crypto_pwhash_OPSLIMIT_MIN
-        const memlimit = nacl.crypto_pwhash_MEMLIMIT_MIN
+        const opslimxit = nacl.crypto_pwhash_OPSLIMIT_MIN
+        const memlimxit = nacl.crypto_pwhash_MEMLIMIT_MIN
         pw = nacl.randombytes_buf(16)
-        hashedPw = nacl.crypto_pwhash_str(pw, opslimit, memlimit)
+        hashedPw = nacl.crypto_pwhash_str(pw, opslimxit, memlimxit)
     })
 
     it('verifies a correct password', async() => {
